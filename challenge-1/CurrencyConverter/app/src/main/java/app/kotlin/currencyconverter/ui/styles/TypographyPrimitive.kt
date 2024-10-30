@@ -17,7 +17,7 @@ val fontFamilyBrand: FontFamily = interFamily
 val fontFamilyPlain: FontFamily = interFamily
 
 val fontWeightRegular: FontWeight = FontWeight.Normal
-val fontWeightMedium: FontWeight = FontWeight.Normal
+val fontWeightMedium: FontWeight = FontWeight.Medium
 val fontWeightSemiBold: FontWeight = FontWeight.SemiBold
 
 const val COMPACT_WIDTH_LINE_HEIGHT = 1.2

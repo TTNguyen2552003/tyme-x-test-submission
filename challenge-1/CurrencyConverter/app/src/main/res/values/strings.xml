@@ -1,3 +1,30 @@
 <resources>
+    <string name="tips_screen_tips_message">\"Don\'t forget to reset for fresh rates if you are still in the app until 0:00 AM tomorrow.\"</string>
+    <string name="tips_screen_primary_button_label">Next</string>
+    <string name="tips_screen_do_not_show_again_message">Don’t show this again.</string>
+
+    <string name="loading_screen_title_text">Loading...</string>
+
+    <string name="no_internet_screen_title_text">No internet</string>
+    <string name="no_internet_screen_primary_button_label">Try again</string>
+
+    <string name="load_failed_screen_title_text">Our service is broken!</string>
+    <string name="load_failed_screen_button_label">Exit app</string>
+    <string name="load_failed_screen_body_text">Please try again later</string>
+
     <string name="app_name">Currency Converter</string>
+    <string name="numpad_button_label_1">1</string>
+    <string name="numpad_button_label_2">2</string>
+    <string name="numpad_button_label_3">3</string>
+    <string name="numpad_button_label_4">4</string>
+    <string name="numpad_button_label_5">5</string>
+    <string name="numpad_button_label_6">6</string>
+    <string name="numpad_button_label_7">7</string>
+    <string name="numpad_button_label_8">8</string>
+    <string name="numpad_button_label_9">9</string>
+    <string name="numpad_button_label_0">0</string>
+    <string name="numpad_button_label_dot_sign">.</string>
+    <string name="functionality_button_label_clear">AC</string>
+    <string name="functionality_button_label_delete">Del</string>
+    <string name="functionality_button_label_decrease_decimal">.00</string>
 </resources>
