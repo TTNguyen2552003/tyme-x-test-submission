@@ -93,7 +93,7 @@ fun LoadFailedScreen(isDarkTheme: Boolean = false) {
                 Text(
                     text = stringResource(id = R.string.load_failed_screen_body_text),
                     style = compactWidthBody.noScale(),
-                    color = titleAndImageColor
+                    color = bodyTextColor
                 )
             }
 

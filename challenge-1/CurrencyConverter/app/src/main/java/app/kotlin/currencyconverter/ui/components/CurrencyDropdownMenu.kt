@@ -14,9 +14,9 @@ import app.kotlin.currencyconverter.ui.styles.shapeMedium
 @Composable
 fun CurrencyDropdownMenu(
     isDarkTheme: Boolean = false,
-    onDismissRequest: () -> Unit = {},
-    currencyUnits: List<String> = emptyList(),
-    changeCurrentUnit: (String) -> Unit = {}
+    onDismissRequest: () -> Unit,
+    currencyUnits: List<String>,
+    updateCurrencyUnit: (String) -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         LazyColumn(
@@ -30,7 +30,7 @@ fun CurrencyDropdownMenu(
                     isDarkTheme = isDarkTheme,
                     unit = currencyUnits[index],
                     onTapped = {
-                        changeCurrentUnit(currencyUnits[index])
+                        updateCurrencyUnit(currencyUnits[index])
                         onDismissRequest()
                     }
                 )

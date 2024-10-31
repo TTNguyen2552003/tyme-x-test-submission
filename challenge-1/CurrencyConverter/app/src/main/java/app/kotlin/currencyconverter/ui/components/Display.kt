@@ -37,10 +37,12 @@ enum class CurrencyType {
 
 @Composable
 fun Display(
-    currencyType: CurrencyType,
     isDarkTheme: Boolean = false,
-    currencyUnit: String = "VND",
-    currencyValue: String = "1000"
+    currencyType: CurrencyType,
+    currencyUnits: List<String>,
+    currentCurrencyUnit: String = "USD",
+    currentCurrencyValue: String = "0",
+    updateCurrencyUnit: (String) -> Unit
 ) {
     val backgroundColor: Color by animateColorAsState(
         targetValue = if (isDarkTheme)
@@ -85,7 +87,9 @@ fun Display(
         ) {
             CurrencyUnitOption(
                 isDarkTheme = isDarkTheme,
-                unit = currencyUnit
+                currencyUnits = currencyUnits,
+                currentCurrencyUnit = currentCurrencyUnit,
+                updateCurrencyUnit = updateCurrencyUnit
             )
         }
 
@@ -99,7 +103,7 @@ fun Display(
             horizontalArrangement = Arrangement.End
         ) {
             Text(
-                text = currencyValue,
+                text = currentCurrencyValue,
                 style = compactWidthDisplay.noScale(),
                 color = textColor
             )

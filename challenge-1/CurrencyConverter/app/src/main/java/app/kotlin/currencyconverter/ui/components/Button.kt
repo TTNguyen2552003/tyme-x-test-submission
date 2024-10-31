@@ -53,7 +53,7 @@ data class ButtonData(
     val type: ButtonType,
     val isContainedIcon: Boolean = false,
     val isIconColorStatic: Boolean = false,
-    @DrawableRes val iconLabel: Int? = null,
+    @DrawableRes var iconLabel: Int? = null,
     @StringRes val textLabel: Int? = null
 )
 

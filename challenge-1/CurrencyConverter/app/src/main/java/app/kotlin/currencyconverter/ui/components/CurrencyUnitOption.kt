@@ -45,8 +45,9 @@ import app.kotlin.currencyconverter.ui.styles.surfaceContainerTint1LightColor
 @Composable
 fun CurrencyUnitOption(
     isDarkTheme: Boolean = false,
-    unit: String,
-    onPressed: () -> Unit = {}
+    currencyUnits: List<String>,
+    currentCurrencyUnit: String,
+    updateCurrencyUnit: (String) -> Unit
 ) {
     var isPressed: Boolean by remember { mutableStateOf(value = false) }
     var isDropdownMenuShown: Boolean by remember { mutableStateOf(value = false) }
@@ -78,7 +79,6 @@ fun CurrencyUnitOption(
                         tryAwaitRelease()
                         isPressed = false
                         isDropdownMenuShown = true
-                        onPressed()
                     }
                 )
             }
@@ -114,7 +114,7 @@ fun CurrencyUnitOption(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = unit,
+                text = currentCurrencyUnit,
                 style = compactWidthLabelMedium.noScale(),
                 color = textAndIconColor
             )
@@ -131,20 +131,8 @@ fun CurrencyUnitOption(
             CurrencyDropdownMenu(
                 isDarkTheme = isDarkTheme,
                 onDismissRequest = { isDropdownMenuShown = false },
-                currencyUnits = listOf(
-                    "VND",
-                    "USD",
-                    "SGD",
-                    "BAT",
-                    "VND",
-                    "USD",
-                    "SGD",
-                    "BAT",
-                    "VND",
-                    "USD",
-                    "SGD",
-                    "BAT"
-                )
+                currencyUnits = currencyUnits,
+                updateCurrencyUnit = updateCurrencyUnit
             )
         }
     }

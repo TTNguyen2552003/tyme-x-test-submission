@@ -28,7 +28,15 @@ import app.kotlin.currencyconverter.ui.styles.surfaceLightColor
 @Composable
 fun ConvertScreen(
     isDarkTheme: Boolean = false,
-    swapConvertCurrency: () -> Unit = {}
+    currencyUnits: List<String>,
+    sourceCurrencyUnit: String,
+    sourceCurrencyValue: String,
+    updateSourceCurrencyUnit: (String) -> Unit,
+    swapCurrencyUnit: () -> Unit,
+    targetCurrencyUnit: String,
+    targetCurrencyValue: String,
+    updateTargetCurrencyUnit: (String) -> Unit,
+    onPressedEvents: List<() -> Unit>
 ) {
     val backgroundColor: Color by animateColorAsState(
         targetValue = if (isDarkTheme)
@@ -42,9 +50,7 @@ fun ConvertScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .drawBehind {
-                drawRect(color = backgroundColor)
-            }
+            .drawBehind { drawRect(color = backgroundColor) }
             .statusBarsPadding()
     ) {
         Column(
@@ -61,16 +67,18 @@ fun ConvertScreen(
                     .weight(weight = 1f)
             ) {
                 Display(
-                    currencyType = CurrencyType.SOURCE,
                     isDarkTheme = isDarkTheme,
-                    currencyUnit = "VND",
-                    currencyValue = "1000"
+                    currencyType = CurrencyType.SOURCE,
+                    currencyUnits = currencyUnits,
+                    currentCurrencyUnit = sourceCurrencyUnit,
+                    currentCurrencyValue = sourceCurrencyValue,
+                    updateCurrencyUnit = updateSourceCurrencyUnit
                 )
             }
 
             SwapButton(
                 isDarkTheme = isDarkTheme,
-                onPressed = swapConvertCurrency
+                onPressed = swapCurrencyUnit
             )
 
             Box(
@@ -79,17 +87,20 @@ fun ConvertScreen(
                     .weight(weight = 1f)
             ) {
                 Display(
-                    currencyType = CurrencyType.TARGET,
                     isDarkTheme = isDarkTheme,
-                    currencyUnit = "USD",
-                    currencyValue = "1000"
+                    currencyType = CurrencyType.TARGET,
+                    currencyUnits = currencyUnits,
+                    currentCurrencyUnit = targetCurrencyUnit,
+                    currentCurrencyValue = targetCurrencyValue,
+                    updateCurrencyUnit = updateTargetCurrencyUnit,
                 )
             }
         }
 
         ButtonsContainer(
             isDarkTheme = isDarkTheme,
-            buttons = buttons
+            buttons = buttons,
+            onPressedEvents = onPressedEvents
         )
     }
 }

@@ -33,7 +33,7 @@ import app.kotlin.currencyconverter.ui.styles.surfaceContainerTint1LightColor
 fun CurrencyDropdownMenuItem(
     isDarkTheme: Boolean = false,
     unit: String,
-    onTapped: () -> Unit = {}
+    onTapped: (String) -> Unit
 ) {
     var isPressed: Boolean by remember { mutableStateOf(value = false) }
 
@@ -59,7 +59,7 @@ fun CurrencyDropdownMenuItem(
         modifier = Modifier
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = { onTapped() },
+                    onTap = { onTapped(unit) },
                     onPress = {
                         isPressed = true
                         tryAwaitRelease()

@@ -52,15 +52,15 @@ val buttons: List<ButtonData> = listOf(
     ),
     ButtonData(
         type = ButtonType.NUMPAD,
-        textLabel = R.string.numpad_button_label_7
+        textLabel = R.string.numpad_button_label_1
     ),
     ButtonData(
         type = ButtonType.NUMPAD,
-        textLabel = R.string.numpad_button_label_8
+        textLabel = R.string.numpad_button_label_2
     ),
     ButtonData(
         type = ButtonType.NUMPAD,
-        textLabel = R.string.numpad_button_label_9
+        textLabel = R.string.numpad_button_label_3
     ),
     ButtonData(
         type = ButtonType.FUNCTIONALITY,
@@ -82,14 +82,7 @@ val buttons: List<ButtonData> = listOf(
     ButtonData(
         type = ButtonType.FUNCTIONALITY,
         isContainedIcon = true,
-        isIconColorStatic = true,
-        iconLabel = R.drawable.light_theme_icon
-    ),
-    ButtonData(
-        type = ButtonType.FUNCTIONALITY,
-        isContainedIcon = true,
-        isIconColorStatic = true,
-        iconLabel = R.drawable.dark_theme_icon
+        isIconColorStatic = true
     )
 )
 
@@ -97,6 +90,7 @@ val buttons: List<ButtonData> = listOf(
 fun ButtonsContainer(
     isDarkTheme: Boolean = false,
     buttons: List<ButtonData>,
+    onPressedEvents: List<() -> Unit>
 ) {
     val backgroundColor: Color by animateColorAsState(
         targetValue = if (isDarkTheme)
@@ -121,28 +115,32 @@ fun ButtonsContainer(
         verticalArrangement = Arrangement.spacedBy(space = gapPositive600),
         horizontalArrangement = Arrangement.spacedBy(space = gapPositive600)
     ) {
-        items(count = buttons.size - 2) { index: Int ->
+        items(count = buttons.size - 1) { index: Int ->
             Button(
                 isDarkTheme = isDarkTheme,
                 type = buttons[index].type,
                 isContainedIcon = buttons[index].isContainedIcon,
                 isIconColorStatic = buttons[index].isIconColorStatic,
                 iconLabel = buttons[index].iconLabel,
-                textLabel = buttons[index].textLabel
+                textLabel = buttons[index].textLabel,
+                onPressed = onPressedEvents[index]
             )
         }
+
         item {
-            val toggleThemeButtonData = if (isDarkTheme)
-                buttons[buttons.size - 1]
+            val lastButtonIndex = buttons.size - 1
+            buttons[lastButtonIndex].iconLabel = if (isDarkTheme)
+                R.drawable.dark_theme_icon
             else
-                buttons[buttons.size - 2]
+                R.drawable.light_theme_icon
             Button(
                 isDarkTheme = isDarkTheme,
-                type = toggleThemeButtonData.type,
-                isContainedIcon = toggleThemeButtonData.isContainedIcon,
-                isIconColorStatic = toggleThemeButtonData.isIconColorStatic,
-                iconLabel = toggleThemeButtonData.iconLabel,
-                textLabel = toggleThemeButtonData.textLabel,
+                type = buttons[lastButtonIndex].type,
+                isContainedIcon = buttons[lastButtonIndex].isContainedIcon,
+                isIconColorStatic = buttons[lastButtonIndex].isIconColorStatic,
+                iconLabel = buttons[lastButtonIndex].iconLabel,
+                textLabel = buttons[lastButtonIndex].textLabel,
+                onPressed = onPressedEvents[lastButtonIndex]
             )
         }
     }
