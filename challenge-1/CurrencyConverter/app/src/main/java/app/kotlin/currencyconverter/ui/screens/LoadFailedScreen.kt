@@ -1,5 +1,6 @@
 package app.kotlin.currencyconverter.ui.screens
 
+import android.app.Activity
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -96,11 +98,12 @@ fun LoadFailedScreen(isDarkTheme: Boolean = false) {
                     color = bodyTextColor
                 )
             }
-
+            val activity = (LocalContext.current as? Activity)
             Button(
                 isDarkTheme = isDarkTheme,
                 type = ButtonType.PRIMARY,
-                textLabel = R.string.load_failed_screen_button_label
+                textLabel = R.string.load_failed_screen_button_label,
+                onPressed = { activity?.finishAffinity() }
             )
         }
     }

@@ -25,7 +25,10 @@ fun MainScreen(
         }
 
         AppDataLoadingState.NO_INTERNET -> {
-            NoInternetScreen(isDarkTheme = isDarkTheme)
+            NoInternetScreen(
+                isDarkTheme = isDarkTheme,
+                retryFetchRatesData = viewModel.refreshRates
+            )
         }
 
         AppDataLoadingState.FAILED -> {

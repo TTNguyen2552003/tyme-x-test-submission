@@ -31,7 +31,10 @@ import app.kotlin.currencyconverter.ui.styles.surfaceDarkColor
 import app.kotlin.currencyconverter.ui.styles.surfaceLightColor
 
 @Composable
-fun NoInternetScreen(isDarkTheme: Boolean = false) {
+fun NoInternetScreen(
+    isDarkTheme: Boolean = false,
+    retryFetchRatesData: () -> Unit
+) {
     val backgroundColor: Color by animateColorAsState(
         targetValue = if (isDarkTheme)
             surfaceDarkColor
@@ -75,7 +78,8 @@ fun NoInternetScreen(isDarkTheme: Boolean = false) {
             Button(
                 isDarkTheme = isDarkTheme,
                 type = ButtonType.PRIMARY,
-                textLabel = R.string.no_internet_screen_primary_button_label
+                textLabel = R.string.no_internet_screen_primary_button_label,
+                onPressed = retryFetchRatesData
             )
         }
     }

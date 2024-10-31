@@ -25,8 +25,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import java.io.IOException
 import java.text.ParseException
+import java.util.concurrent.TimeoutException
 
 enum class AppDataLoadingState {
     LOADING,
@@ -68,17 +70,19 @@ class MainScreenViewModel(
                     val endPoints: List<String> = listOf(GetMethodEndPoints.LATEST)
                     val queries: Map<String, String> =
                         mapOf(KEY_ACCESS_KEY_URL to VALUE_ACCESS_KEY_URL)
-                    currencyUnitsAndRates = ratesRepository.getRatesData(
-                        endPoints = endPoints,
-                        queries = queries
-                    ).rates
+                        currencyUnitsAndRates = ratesRepository.getRatesData(
+                            endPoints = endPoints,
+                            queries = queries
+                        ).rates
                     currencyUnits = currencyUnitsAndRates.map { pair -> pair.key }
                     updateAppDataLoadingState(newState = AppDataLoadingState.SUCCESS)
-                } catch (error: IOException) {
+                } catch (exception: IOException) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
-                } catch (error: Exception) {
+                } catch (exception: TimeoutException) {
+                    updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
+                } catch (exception: Exception) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.FAILED)
-                    Log.e("Error", error.toString())
+                    Log.e("Error", exception.toString())
                 }
             }
         }
@@ -344,7 +348,7 @@ class MainScreenViewModel(
             val decimalFormat = DecimalFormat(pattern)
             val currentTargetCurrencyValueInDouble: Double? = try {
                 decimalFormat.parse(currentTargetCurrencyValue)?.toDouble()
-            } catch (e: ParseException) {
+            } catch (exception: ParseException) {
                 null
             }
 
