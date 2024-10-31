@@ -34,6 +34,7 @@ import app.kotlin.currencyconverter.ui.components.ButtonType
 import app.kotlin.currencyconverter.ui.motion.standardAnimation
 import app.kotlin.currencyconverter.ui.navigation.Destination
 import app.kotlin.currencyconverter.ui.styles.compactWidthBody
+import app.kotlin.currencyconverter.ui.styles.compactWidthSupportingText
 import app.kotlin.currencyconverter.ui.styles.gapPositive200
 import app.kotlin.currencyconverter.ui.styles.gapPositive400
 import app.kotlin.currencyconverter.ui.styles.gapPositive600
@@ -163,7 +164,7 @@ fun TipsScreen(
 
             Text(
                 text = stringResource(id = R.string.tips_screen_do_not_show_again_message),
-                style = compactWidthBody.noScale(),
+                style = compactWidthSupportingText.noScale(),
                 color = doNotShowTipsColor
             )
         }

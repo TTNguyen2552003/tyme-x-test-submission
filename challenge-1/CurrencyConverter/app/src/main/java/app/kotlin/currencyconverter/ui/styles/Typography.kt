@@ -44,3 +44,10 @@ val compactWidthBody: TextStyle = TextStyle(
     fontSize = typeScaleCompactWidthRootSize,
     lineHeight = typeScaleCompactWidthRootSize * COMPACT_WIDTH_LINE_HEIGHT
 )
+
+val compactWidthSupportingText: TextStyle = TextStyle(
+    fontFamily = fontFamilyPlain,
+    fontWeight = fontWeightRegular,
+    fontSize = typeScaleCompactWidthScaleDown1,
+    lineHeight = typeScaleCompactWidthScaleDown1 * COMPACT_WIDTH_LINE_HEIGHT
+)

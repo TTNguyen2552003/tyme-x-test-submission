@@ -26,3 +26,4 @@ val typeScaleCompactWidthScaleUp1: TextUnit = 16.sp
 val typeScaleCompactWidthScaleUp2: TextUnit = 18.sp
 val typeScaleCompactWidthScaleUp3: TextUnit = 25.sp
 val typeScaleCompactWidthScaleUp4: TextUnit = 28.sp
+val typeScaleCompactWidthScaleDown1: TextUnit = 10.sp

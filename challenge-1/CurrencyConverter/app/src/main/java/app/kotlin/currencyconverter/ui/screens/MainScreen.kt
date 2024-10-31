@@ -47,6 +47,7 @@ fun MainScreen(
                 onPressedEvents = viewModel.onPressedEvents,
                 updateSourceCurrencyUnit = viewModel.updateSourceCurrencyUnit,
                 updateTargetCurrencyUnit = viewModel.updateTargetCurrencyUnit,
+                lastRatesUpdatingDate = uiState.lastRatesUpdatingDate,
                 currencyUnits = viewModel.currencyUnits
             )
         }

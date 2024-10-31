@@ -43,7 +43,8 @@ data class MainScreenUiState(
     val sourceCurrencyUnit: String = "USD",
     val sourceCurrencyValue: String = "0",
     val targetCurrencyUnit: String = "VND",
-    val targetCurrencyValue: String = "0"
+    val targetCurrencyValue: String = "0",
+    val lastRatesUpdatingDate:String = "loading..."
 )
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
