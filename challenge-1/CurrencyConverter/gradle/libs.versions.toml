@@ -12,6 +12,7 @@ dotlottieAndroidVersion = "0.5.0"
 ktorVersion = "3.0.0"
 datastoreVersion = "1.1.1"
 navigationVersion = "2.8.3"
+splashscreenVersion = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +36,7 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastoreVersion" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationVersion" }
+androidx-core-splashscreen = {group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreenVersion"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -20,6 +20,7 @@ import app.kotlin.currencyconverter.data.RatesRepository
 import app.kotlin.currencyconverter.data.models.CurrencyRatesResponse
 import app.kotlin.currencyconverter.network.GetMethodEndPoints
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -83,10 +84,13 @@ class MainScreenViewModel(
 
                     currencyUnitsAndRates = currencyRatesResponse.rates
                     currencyUnits = currencyUnitsAndRates.map { pair -> pair.key }
-                    updateAppDataLoadingState(newState = AppDataLoadingState.SUCCESS)
+                    _uiState.update { currentState->currentState.copy(
+                        appDataLoadingState = AppDataLoadingState.SUCCESS,
+                        lastRatesUpdatingDate = currencyRatesResponse.date
+                    ) }
                 } catch (exception: IOException) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
-                } catch (exception: TimeoutException) {
+                } catch (exception: TimeoutCancellationException) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
                 } catch (exception: Exception) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.FAILED)
@@ -329,7 +333,7 @@ class MainScreenViewModel(
                     }
                 } catch (exception: IOException) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
-                } catch (exception: TimeoutException) {
+                } catch (exception: TimeoutCancellationException) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
                 } catch (exception: Exception) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.FAILED)

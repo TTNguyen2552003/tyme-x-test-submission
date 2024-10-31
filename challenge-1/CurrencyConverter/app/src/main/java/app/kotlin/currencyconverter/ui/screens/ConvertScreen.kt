@@ -84,8 +84,8 @@ fun ConvertScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .defaultMinSize(minHeight = 120.dp)
                     .weight(weight = 1f)
+                    .defaultMinSize(minHeight = 120.dp)
             ) {
                 Display(
                     isDarkTheme = isDarkTheme,
@@ -105,8 +105,8 @@ fun ConvertScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .defaultMinSize(minHeight = 120.dp)
                     .weight(weight = 1f)
+                    .defaultMinSize(minHeight = 120.dp)
             ) {
                 Display(
                     isDarkTheme = isDarkTheme,
