@@ -5,10 +5,19 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import app.kotlin.currencyconverter.CurrencyConverterApplication
 import app.kotlin.currencyconverter.DEFAULT_DECIMAL_PLACE
 import app.kotlin.currencyconverter.DOT_SIGN
-import app.kotlin.currencyconverter.network.fetchRates
+import app.kotlin.currencyconverter.KEY_ACCESS_KEY_URL
+import app.kotlin.currencyconverter.VALUE_ACCESS_KEY_URL
+import app.kotlin.currencyconverter.data.AppContainer
+import app.kotlin.currencyconverter.data.RatesRepository
+import app.kotlin.currencyconverter.network.GetMethodEndPoints
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +45,7 @@ data class MainScreenUiState(
 )
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-class MainScreenViewModel : ViewModel() {
+class MainScreenViewModel(private val ratesRepository: RatesRepository) : ViewModel() {
     private val _uiState: MutableStateFlow<MainScreenUiState> =
         MutableStateFlow(value = MainScreenUiState())
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
@@ -55,7 +64,13 @@ class MainScreenViewModel : ViewModel() {
         viewModelScope.launch {
             withContext(IO) {
                 try {
-                    currencyUnitsAndRates = fetchRates().rates
+                    val endPoints: List<String> = listOf(GetMethodEndPoints.LATEST)
+                    val queries: Map<String, String> =
+                        mapOf(KEY_ACCESS_KEY_URL to VALUE_ACCESS_KEY_URL)
+                    currencyUnitsAndRates = ratesRepository.getRatesData(
+                        endPoints = endPoints,
+                        queries = queries
+                    ).rates
                     currencyUnits = currencyUnitsAndRates.map { pair -> pair.key }
                     updateAppDataLoadingState(newState = AppDataLoadingState.SUCCESS)
                 } catch (error: IOException) {
@@ -269,7 +284,13 @@ class MainScreenViewModel : ViewModel() {
                 try {
                     updateAppDataLoadingState(newState = AppDataLoadingState.LOADING)
 
-                    currencyUnitsAndRates = fetchRates().rates
+                    val endPoints: List<String> = listOf(GetMethodEndPoints.LATEST)
+                    val queries: Map<String, String> =
+                        mapOf(KEY_ACCESS_KEY_URL to VALUE_ACCESS_KEY_URL)
+                    currencyUnitsAndRates = ratesRepository.getRatesData(
+                        endPoints = endPoints,
+                        queries = queries
+                    ).rates
                     currencyUnits = currencyUnitsAndRates.map { pair -> pair.key }
                     updateAppDataLoadingState(newState = AppDataLoadingState.SUCCESS)
 
@@ -363,4 +384,15 @@ class MainScreenViewModel : ViewModel() {
         appendDotSign,
         toggleTheme
     )
+
+    companion object {
+        val factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application: CurrencyConverterApplication =
+                    (this[APPLICATION_KEY] as CurrencyConverterApplication)
+                val appContainer: AppContainer = application.appContainer
+                MainScreenViewModel(ratesRepository = appContainer.ratesRepository)
+            }
+        }
+    }
 }

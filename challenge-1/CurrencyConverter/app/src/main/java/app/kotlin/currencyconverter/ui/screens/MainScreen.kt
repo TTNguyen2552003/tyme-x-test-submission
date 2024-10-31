@@ -12,7 +12,7 @@ import app.kotlin.currencyconverter.ui.viewmodels.MainScreenViewModel
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel()) {
+fun MainScreen(viewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.factory)) {
     val uiState: MainScreenUiState by viewModel.uiState.collectAsState()
 
     when (uiState.appDataLoadingState) {
