@@ -27,10 +27,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import app.kotlin.currencyconverter.R
 import app.kotlin.currencyconverter.ui.components.Button
 import app.kotlin.currencyconverter.ui.components.ButtonType
 import app.kotlin.currencyconverter.ui.motion.standardAnimation
+import app.kotlin.currencyconverter.ui.navigation.Destination
 import app.kotlin.currencyconverter.ui.styles.compactWidthBody
 import app.kotlin.currencyconverter.ui.styles.gapPositive200
 import app.kotlin.currencyconverter.ui.styles.gapPositive400
@@ -47,7 +49,11 @@ import app.kotlin.currencyconverter.ui.styles.surfaceDarkColor
 import app.kotlin.currencyconverter.ui.styles.surfaceLightColor
 
 @Composable
-fun TipsScreen(isDarkTheme: Boolean = false) {
+fun TipsScreen(
+    navController: NavController,
+    isDarkTheme: Boolean = false,
+    hideTipsScreenPermanently: () -> Unit
+) {
     val backgroundColor: Color by animateColorAsState(
         targetValue = if (isDarkTheme)
             surfaceDarkColor
@@ -83,8 +89,8 @@ fun TipsScreen(isDarkTheme: Boolean = false) {
         label = "color of text tips"
     )
 
-    var isTipsShown: Boolean by remember {
-        mutableStateOf(value = true)
+    var doNotShowTipsScreenAgainOption: Boolean by remember {
+        mutableStateOf(value = false)
     }
 
     Box(
@@ -116,7 +122,15 @@ fun TipsScreen(isDarkTheme: Boolean = false) {
             Button(
                 isDarkTheme = isDarkTheme,
                 type = ButtonType.PRIMARY,
-                textLabel = R.string.tips_screen_primary_button_label
+                textLabel = R.string.tips_screen_primary_button_label,
+                onPressed = {
+                    navController.navigate(route = Destination.MAIN_SCREEN.route) {
+                        popUpTo(id = 0) { inclusive = false }
+                    }
+                    if (doNotShowTipsScreenAgainOption){
+                        hideTipsScreenPermanently()
+                    }
+                }
             )
         }
 
@@ -129,17 +143,17 @@ fun TipsScreen(isDarkTheme: Boolean = false) {
         ) {
             Image(
                 painter = painterResource(
-                    id = if (isTipsShown)
-                        R.drawable.unchecked_box
-                    else
+                    id = if (doNotShowTipsScreenAgainOption)
                         R.drawable.checked_box
+                    else
+                        R.drawable.unchecked_box
                 ),
                 contentDescription = "check box",
                 modifier = Modifier
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onPress = {
-                                isTipsShown = !isTipsShown
+                                doNotShowTipsScreenAgainOption = !doNotShowTipsScreenAgainOption
                             }
                         )
                     }

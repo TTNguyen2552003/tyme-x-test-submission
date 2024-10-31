@@ -28,6 +28,7 @@ import app.kotlin.currencyconverter.ui.styles.surfaceLightColor
 @Composable
 fun ConvertScreen(
     isDarkTheme: Boolean = false,
+    toggleTheme: () -> Unit,
     currencyUnits: List<String>,
     sourceCurrencyUnit: String,
     sourceCurrencyValue: String,
@@ -99,6 +100,7 @@ fun ConvertScreen(
 
         ButtonsContainer(
             isDarkTheme = isDarkTheme,
+            toggleTheme = toggleTheme,
             buttons = buttons,
             onPressedEvents = onPressedEvents
         )

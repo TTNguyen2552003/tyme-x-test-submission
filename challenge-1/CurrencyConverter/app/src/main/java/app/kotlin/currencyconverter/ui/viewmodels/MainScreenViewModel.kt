@@ -17,13 +17,11 @@ import app.kotlin.currencyconverter.KEY_ACCESS_KEY_URL
 import app.kotlin.currencyconverter.VALUE_ACCESS_KEY_URL
 import app.kotlin.currencyconverter.data.AppContainer
 import app.kotlin.currencyconverter.data.RatesRepository
-import app.kotlin.currencyconverter.data.UserPreferenceRepository
 import app.kotlin.currencyconverter.network.GetMethodEndPoints
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -38,7 +36,6 @@ enum class AppDataLoadingState {
 }
 
 data class MainScreenUiState(
-    val isDarkTheme: Boolean = false,
     val appDataLoadingState: AppDataLoadingState = AppDataLoadingState.LOADING,
     val sourceCurrencyUnit: String = "USD",
     val sourceCurrencyValue: String = "0",
@@ -49,7 +46,6 @@ data class MainScreenUiState(
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class MainScreenViewModel(
     private val ratesRepository: RatesRepository,
-    private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<MainScreenUiState> =
         MutableStateFlow(value = MainScreenUiState())
@@ -61,7 +57,6 @@ class MainScreenViewModel(
     private var currentDecimalPlaces: Int = DEFAULT_DECIMAL_PLACE
 
     init {
-        initTheme()
         initData()
     }
 
@@ -84,16 +79,6 @@ class MainScreenViewModel(
                 } catch (error: Exception) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.FAILED)
                     Log.e("Error", error.toString())
-                }
-            }
-        }
-    }
-
-    private fun initTheme() {
-        viewModelScope.launch {
-            withContext(IO) {
-                _uiState.update { currentState ->
-                    currentState.copy(isDarkTheme = userPreferenceRepository.isDarkTheme.first())
                 }
             }
         }
@@ -376,18 +361,6 @@ class MainScreenViewModel(
         }
     }
 
-    private val toggleTheme: () -> Unit = {
-        viewModelScope.launch {
-            withContext(IO) {
-                val isDarkTheme = _uiState.value.isDarkTheme
-                _uiState.update { currentState ->
-                    currentState.copy(isDarkTheme = !isDarkTheme)
-                }
-                userPreferenceRepository.saveThemePreference(isDarkTheme = !isDarkTheme)
-            }
-        }
-    }
-
     val onPressedEvents: List<() -> Unit> = listOf(
         { appendSourceCurrencyValue(char = '7') },
         { appendSourceCurrencyValue(char = '8') },
@@ -403,8 +376,7 @@ class MainScreenViewModel(
         refreshRates,
         decreaseDecimal,
         { appendSourceCurrencyValue(char = '0') },
-        appendDotSign,
-        toggleTheme
+        appendDotSign
     )
 
     companion object {
@@ -413,10 +385,8 @@ class MainScreenViewModel(
                 val application: CurrencyConverterApplication =
                     (this[APPLICATION_KEY] as CurrencyConverterApplication)
                 val appContainer: AppContainer = application.appContainer
-                MainScreenViewModel(
-                    ratesRepository = appContainer.ratesRepository,
-                    userPreferenceRepository = appContainer.userPreferenceRepository
-                )
+                MainScreenViewModel(ratesRepository = appContainer.ratesRepository)
+
             }
         }
     }

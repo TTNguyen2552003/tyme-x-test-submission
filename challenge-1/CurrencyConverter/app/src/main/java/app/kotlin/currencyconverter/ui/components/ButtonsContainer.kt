@@ -89,6 +89,7 @@ val buttons: List<ButtonData> = listOf(
 @Composable
 fun ButtonsContainer(
     isDarkTheme: Boolean = false,
+    toggleTheme: () -> Unit,
     buttons: List<ButtonData>,
     onPressedEvents: List<() -> Unit>
 ) {
@@ -140,7 +141,7 @@ fun ButtonsContainer(
                 isIconColorStatic = buttons[lastButtonIndex].isIconColorStatic,
                 iconLabel = buttons[lastButtonIndex].iconLabel,
                 textLabel = buttons[lastButtonIndex].textLabel,
-                onPressed = onPressedEvents[lastButtonIndex]
+                onPressed = toggleTheme
             )
         }
     }

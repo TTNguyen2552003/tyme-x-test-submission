@@ -12,25 +12,30 @@ import app.kotlin.currencyconverter.ui.viewmodels.MainScreenViewModel
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.factory)) {
+fun MainScreen(
+    isDarkTheme: Boolean = false,
+    toggleTheme: () -> Unit,
+    viewModel: MainScreenViewModel = viewModel(factory = MainScreenViewModel.factory)
+) {
     val uiState: MainScreenUiState by viewModel.uiState.collectAsState()
 
     when (uiState.appDataLoadingState) {
         AppDataLoadingState.LOADING -> {
-            LoadingScreen(isDarkTheme = uiState.isDarkTheme)
+            LoadingScreen(isDarkTheme = isDarkTheme)
         }
 
         AppDataLoadingState.NO_INTERNET -> {
-            NoInternetScreen(isDarkTheme = uiState.isDarkTheme)
+            NoInternetScreen(isDarkTheme = isDarkTheme)
         }
 
         AppDataLoadingState.FAILED -> {
-            LoadFailedScreen(isDarkTheme = uiState.isDarkTheme)
+            LoadFailedScreen(isDarkTheme = isDarkTheme)
         }
 
         AppDataLoadingState.SUCCESS -> {
             ConvertScreen(
-                isDarkTheme = uiState.isDarkTheme,
+                isDarkTheme = isDarkTheme,
+                toggleTheme = toggleTheme,
                 sourceCurrencyUnit = uiState.sourceCurrencyUnit,
                 sourceCurrencyValue = uiState.sourceCurrencyValue,
                 targetCurrencyUnit = uiState.targetCurrencyUnit,

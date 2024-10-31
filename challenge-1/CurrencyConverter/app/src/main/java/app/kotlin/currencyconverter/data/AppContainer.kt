@@ -13,7 +13,7 @@ interface AppContainer {
     val userPreferenceRepository: UserPreferenceRepository
 }
 
-class DefaultAppContainer(private val dataStore: DataStore<Preferences>) : AppContainer {
+class DefaultAppContainer(dataStore: DataStore<Preferences>) : AppContainer {
     private val fetchRatesBaseUrl: String = "https://api.exchangeratesapi.io/v1"
 
     private val httpClient: HttpClient = HttpClient(Android) {

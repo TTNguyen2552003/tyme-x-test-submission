@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 class UserPreferenceRepository(private val dataStore: DataStore<Preferences>) {
     private companion object {
         val IS_DARK_THEME = booleanPreferencesKey(name = "is_dark_theme")
+        val TIPS_SCREEN_SHOWN = booleanPreferencesKey(name = "tips_screen_shown")
     }
 
     suspend fun saveThemePreference(isDarkTheme: Boolean) {
@@ -18,6 +19,15 @@ class UserPreferenceRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    suspend fun saveTipsScreenShowingPreference(tipsScreenShown: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[TIPS_SCREEN_SHOWN] = tipsScreenShown
+        }
+    }
+
+    val tipsScreenShown: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[TIPS_SCREEN_SHOWN] ?: true
+    }
     val isDarkTheme: Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[IS_DARK_THEME] ?: false
     }

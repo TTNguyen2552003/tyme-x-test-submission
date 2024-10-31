@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresExtension
-import app.kotlin.currencyconverter.ui.screens.MainScreen
+import app.kotlin.currencyconverter.ui.navigation.CurrencyConverterNavigation
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class MainActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MainScreen()
+            CurrencyConverterNavigation()
         }
     }
 }

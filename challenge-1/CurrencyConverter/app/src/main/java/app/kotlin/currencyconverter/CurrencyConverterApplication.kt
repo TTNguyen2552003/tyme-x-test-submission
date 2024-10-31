@@ -8,7 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import app.kotlin.currencyconverter.data.AppContainer
 import app.kotlin.currencyconverter.data.DefaultAppContainer
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = THEME_PREFERENCE_NAME)
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = USER_PREFERENCE_NAME)
 
 class CurrencyConverterApplication : Application() {
     lateinit var appContainer: AppContainer
