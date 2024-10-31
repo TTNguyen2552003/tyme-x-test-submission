@@ -17,11 +17,13 @@ import app.kotlin.currencyconverter.KEY_ACCESS_KEY_URL
 import app.kotlin.currencyconverter.VALUE_ACCESS_KEY_URL
 import app.kotlin.currencyconverter.data.AppContainer
 import app.kotlin.currencyconverter.data.RatesRepository
+import app.kotlin.currencyconverter.data.UserPreferenceRepository
 import app.kotlin.currencyconverter.network.GetMethodEndPoints
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,7 +47,10 @@ data class MainScreenUiState(
 )
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
-class MainScreenViewModel(private val ratesRepository: RatesRepository) : ViewModel() {
+class MainScreenViewModel(
+    private val ratesRepository: RatesRepository,
+    private val userPreferenceRepository: UserPreferenceRepository
+) : ViewModel() {
     private val _uiState: MutableStateFlow<MainScreenUiState> =
         MutableStateFlow(value = MainScreenUiState())
     val uiState: StateFlow<MainScreenUiState> = _uiState.asStateFlow()
@@ -56,6 +61,7 @@ class MainScreenViewModel(private val ratesRepository: RatesRepository) : ViewMo
     private var currentDecimalPlaces: Int = DEFAULT_DECIMAL_PLACE
 
     init {
+        initTheme()
         initData()
     }
 
@@ -78,6 +84,16 @@ class MainScreenViewModel(private val ratesRepository: RatesRepository) : ViewMo
                 } catch (error: Exception) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.FAILED)
                     Log.e("Error", error.toString())
+                }
+            }
+        }
+    }
+
+    private fun initTheme() {
+        viewModelScope.launch {
+            withContext(IO) {
+                _uiState.update { currentState ->
+                    currentState.copy(isDarkTheme = userPreferenceRepository.isDarkTheme.first())
                 }
             }
         }
@@ -361,8 +377,14 @@ class MainScreenViewModel(private val ratesRepository: RatesRepository) : ViewMo
     }
 
     private val toggleTheme: () -> Unit = {
-        _uiState.update { currentState ->
-            currentState.copy(isDarkTheme = !currentState.isDarkTheme)
+        viewModelScope.launch {
+            withContext(IO) {
+                val isDarkTheme = _uiState.value.isDarkTheme
+                _uiState.update { currentState ->
+                    currentState.copy(isDarkTheme = !isDarkTheme)
+                }
+                userPreferenceRepository.saveThemePreference(isDarkTheme = !isDarkTheme)
+            }
         }
     }
 
@@ -391,7 +413,10 @@ class MainScreenViewModel(private val ratesRepository: RatesRepository) : ViewMo
                 val application: CurrencyConverterApplication =
                     (this[APPLICATION_KEY] as CurrencyConverterApplication)
                 val appContainer: AppContainer = application.appContainer
-                MainScreenViewModel(ratesRepository = appContainer.ratesRepository)
+                MainScreenViewModel(
+                    ratesRepository = appContainer.ratesRepository,
+                    userPreferenceRepository = appContainer.userPreferenceRepository
+                )
             }
         }
     }

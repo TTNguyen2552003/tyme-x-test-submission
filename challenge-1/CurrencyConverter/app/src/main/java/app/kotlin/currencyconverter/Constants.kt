@@ -7,3 +7,5 @@ const val VALUE_ACCESS_KEY_URL: String = "5de6582b71067268f2262e6e8e2a1984"
 
 const val DEFAULT_DECIMAL_PLACE: Int = 6
 const val DOT_SIGN: Char = '.'
+
+const val THEME_PREFERENCE_NAME = "theme_preference"
