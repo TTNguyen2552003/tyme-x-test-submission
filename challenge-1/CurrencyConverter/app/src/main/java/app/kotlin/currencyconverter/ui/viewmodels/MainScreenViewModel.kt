@@ -17,6 +17,7 @@ import app.kotlin.currencyconverter.KEY_ACCESS_KEY_URL
 import app.kotlin.currencyconverter.VALUE_ACCESS_KEY_URL
 import app.kotlin.currencyconverter.data.AppContainer
 import app.kotlin.currencyconverter.data.RatesRepository
+import app.kotlin.currencyconverter.data.models.CurrencyRatesResponse
 import app.kotlin.currencyconverter.network.GetMethodEndPoints
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,10 +71,16 @@ class MainScreenViewModel(
                     val endPoints: List<String> = listOf(GetMethodEndPoints.LATEST)
                     val queries: Map<String, String> =
                         mapOf(KEY_ACCESS_KEY_URL to VALUE_ACCESS_KEY_URL)
-                        currencyUnitsAndRates = ratesRepository.getRatesData(
+                    val currencyRatesResponse: CurrencyRatesResponse
+
+                    withTimeout(timeMillis = TIMEOUT_REQUEST_DURATION) {
+                        currencyRatesResponse = ratesRepository.getRatesData(
                             endPoints = endPoints,
                             queries = queries
-                        ).rates
+                        )
+                    }
+
+                    currencyUnitsAndRates = currencyRatesResponse.rates
                     currencyUnits = currencyUnitsAndRates.map { pair -> pair.key }
                     updateAppDataLoadingState(newState = AppDataLoadingState.SUCCESS)
                 } catch (exception: IOException) {
@@ -283,7 +290,7 @@ class MainScreenViewModel(
         }
     }
 
-    private val refreshRates: () -> Unit = {
+    val refreshRates: () -> Unit = {
         viewModelScope.launch {
             withContext(IO) {
                 try {
@@ -292,10 +299,16 @@ class MainScreenViewModel(
                     val endPoints: List<String> = listOf(GetMethodEndPoints.LATEST)
                     val queries: Map<String, String> =
                         mapOf(KEY_ACCESS_KEY_URL to VALUE_ACCESS_KEY_URL)
-                    currencyUnitsAndRates = ratesRepository.getRatesData(
-                        endPoints = endPoints,
-                        queries = queries
-                    ).rates
+                    val currencyRatesResponse: CurrencyRatesResponse
+
+                    withTimeout(timeMillis = TIMEOUT_REQUEST_DURATION) {
+                        currencyRatesResponse = ratesRepository.getRatesData(
+                            endPoints = endPoints,
+                            queries = queries
+                        )
+                    }
+
+                    currencyUnitsAndRates = currencyRatesResponse.rates
                     currencyUnits = currencyUnitsAndRates.map { pair -> pair.key }
                     updateAppDataLoadingState(newState = AppDataLoadingState.SUCCESS)
 
@@ -313,10 +326,13 @@ class MainScreenViewModel(
                     _uiState.update { currentState ->
                         currentState.copy(targetCurrencyValue = newTargetCurrencyValue)
                     }
-                } catch (error: IOException) {
+                } catch (exception: IOException) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
-                } catch (error: Exception) {
+                } catch (exception: TimeoutException) {
+                    updateAppDataLoadingState(newState = AppDataLoadingState.NO_INTERNET)
+                } catch (exception: Exception) {
                     updateAppDataLoadingState(newState = AppDataLoadingState.FAILED)
+                    Log.e("Error", exception.toString())
                 }
             }
         }
@@ -393,5 +409,7 @@ class MainScreenViewModel(
 
             }
         }
+
+        const val TIMEOUT_REQUEST_DURATION = 10000L
     }
 }
