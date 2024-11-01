@@ -30,7 +30,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.io.IOException
 import java.text.ParseException
-import java.util.concurrent.TimeoutException
 
 /**
  * Represents the different states of data loading in the app.
@@ -365,7 +364,7 @@ class MainScreenViewModel(
             }
         } else {
             val currentSourceCurrencyRate: Double = getCurrentSourceCurrencyRate()
-            val currentTargetCurrencyRate: Double = getCurrentSourceCurrencyRate()
+            val currentTargetCurrencyRate: Double = getCurrentTargetCurrencyRate()
 
             val newTargetCurrencyValue: String = convertValue(
                 sourceCurrencyRate = currentSourceCurrencyRate,
