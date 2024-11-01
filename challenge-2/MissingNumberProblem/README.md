@@ -33,14 +33,15 @@ root folder
 ```
     git clone https://github.com/TTNguyen2552003/tyme-x-test-submission.git
 ```
+- Navigate to the project folder
+```
+    cd tyme-x-test-submission/challenge-2/MissingNumberProblem
+```
 - Change the branch
 ```
     git checkout question-2_2
 ```
-- Navigate to project folder
-```
-    cd tyme-x-test-submission/challenge-2/MissingNumberProblem
-```
+- Open the current folder by the IDE
 
 ## Author
 - [@TTNguyen2552003](https://www.github.com/TTNguyen2552003)
