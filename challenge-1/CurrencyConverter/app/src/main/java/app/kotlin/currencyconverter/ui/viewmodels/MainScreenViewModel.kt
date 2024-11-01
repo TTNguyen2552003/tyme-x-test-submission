@@ -32,22 +32,57 @@ import java.io.IOException
 import java.text.ParseException
 import java.util.concurrent.TimeoutException
 
+/**
+ * Represents the different states of data loading in the app.
+ *
+ * This enum is used to indicate the status of currency data retrieval, which is reflected in the UI
+ * to inform users about network issues, success, or ongoing loading processes.
+ */
 enum class AppDataLoadingState {
+    /** Indicates that data is currently being loaded. */
     LOADING,
+
+    /** Indicates that no internet connection is available. */
     NO_INTERNET,
+
+    /** Indicates that the data loading process has failed due to an error. */
     FAILED,
+
+    /** Indicates that data has been successfully loaded. */
     SUCCESS
 }
 
+/**
+ * Holds the UI state data for the main screen of the app.
+ *
+ * This data class stores the necessary state information for displaying currency conversion data,
+ * including the source and target currency units and values, as well as the loading status.
+ *
+ * @property appDataLoadingState The current data loading state, which indicates if data is loading,
+ *                               has failed, succeeded, or if there is no internet.
+ * @property sourceCurrencyUnit The unit of the source currency (default is "USD").
+ * @property sourceCurrencyValue The value of the source currency entered by the user.
+ * @property targetCurrencyUnit The unit of the target currency (default is "VND").
+ * @property targetCurrencyValue The converted value of the target currency.
+ * @property lastRatesUpdatingDate A string representing the last update date of the currency rates.
+ */
 data class MainScreenUiState(
     val appDataLoadingState: AppDataLoadingState = AppDataLoadingState.LOADING,
     val sourceCurrencyUnit: String = "USD",
     val sourceCurrencyValue: String = "0",
     val targetCurrencyUnit: String = "VND",
     val targetCurrencyValue: String = "0",
-    val lastRatesUpdatingDate:String = "loading..."
+    val lastRatesUpdatingDate: String = "loading..."
 )
 
+
+/**
+ * ViewModel responsible for managing the main currency converter screen's UI state and business logic.
+ * Handles currency conversion calculations, number formatting, and real-time rate updates.
+ *
+ * @property ratesRepository Repository for fetching currency exchange rates
+ * @constructor Creates MainScreenViewModel with the specified RatesRepository
+ */
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 class MainScreenViewModel(
     private val ratesRepository: RatesRepository,
@@ -65,6 +100,14 @@ class MainScreenViewModel(
         initData()
     }
 
+    /**
+     * Initializes currency rate data by fetching latest rates from the repository.
+     * Updates UI state based on the API response or error conditions.
+     *
+     * @throws IOException If network connection fails
+     * @throws TimeoutCancellationException If request exceeds timeout duration
+     * @RequiresExtension Requires Android S (API level 31) or higher
+     */
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun initData() {
         viewModelScope.launch {
@@ -100,12 +143,21 @@ class MainScreenViewModel(
         }
     }
 
+    /**
+    * Updates the app's data loading state in the UI
+    * @param newState New state to be set
+    */
     private fun updateAppDataLoadingState(newState: AppDataLoadingState) {
         _uiState.update { currentState ->
             currentState.copy(appDataLoadingState = newState)
         }
     }
 
+    /**
+     * Formats the source currency value with proper thousand separators and decimal point
+     * @param sourceValue Raw source value to format
+     * @return Formatted string representation of the value
+     */
     private fun formatSourceCurrencyValue(sourceValue: String): String {
         val integerPartAndFractionalPart = sourceValue.split(".")
         val integerPartFormatter = DecimalFormat("#,###")
@@ -117,10 +169,19 @@ class MainScreenViewModel(
             formattedIntegerPart
     }
 
+    /**
+     * Removes formatting characters from the source value
+     * @param formattedSource Formatted source string
+     * @return Raw string without formatting characters
+     */
     private fun parseSourceValue(formattedSource: String): String {
         return formattedSource.replace(oldValue = ",", newValue = "")
     }
 
+    /**
+     * Appends a character to the source currency value and updates related calculations
+     * @param char Character to append
+     */
     private fun appendSourceCurrencyValue(char: Char) {
         val newSourceCurrencyValue: String
 
@@ -151,6 +212,9 @@ class MainScreenViewModel(
         }
     }
 
+    /**
+     * Lambda function to swap source and target currency units and recalculate conversions
+     */
     val swapCurrencyUnit: () -> Unit = {
         val newSourceCurrencyRate: Double = getCurrentTargetCurrencyRate()
         val newTargetCurrencyRate: Double = getCurrentSourceCurrencyRate()
@@ -172,6 +236,10 @@ class MainScreenViewModel(
         }
     }
 
+    /**
+    * Lambda function to update the source currency unit and recalculate the conversion
+    * @param newUnit New currency unit to set as source
+    */
     val updateSourceCurrencyUnit: (String) -> Unit = { newUnit: String ->
         val newSourceCurrencyRate: Double = currencyUnitsAndRates[newUnit] ?: 1.0
         val currentTargetCurrencyRate: Double = getCurrentTargetCurrencyRate()
@@ -192,6 +260,10 @@ class MainScreenViewModel(
         }
     }
 
+    /**
+     * Lambda function to update the target currency unit and recalculate the conversion
+     * @param newUnit New currency unit to set as target
+     */
     val updateTargetCurrencyUnit: (String) -> Unit = { newUnit: String ->
         val currentSourceCurrencyRate: Double = getCurrentSourceCurrencyRate()
         val newTargetCurrencyRate: Double = currencyUnitsAndRates[newUnit] ?: 1.0
@@ -212,16 +284,31 @@ class MainScreenViewModel(
         }
     }
 
+    /**
+     * Retrieves the current source currency exchange rate
+     * @return Current source currency rate or 1.0 if not found
+     */
     private fun getCurrentSourceCurrencyRate(): Double {
         val currentSourceCurrencyUnit: String = _uiState.value.sourceCurrencyUnit
         return currencyUnitsAndRates[currentSourceCurrencyUnit] ?: 1.0
     }
 
+    /**
+     * Retrieves the current target currency exchange rate
+     * @return Current target currency rate or 1.0 if not found
+     */
     private fun getCurrentTargetCurrencyRate(): Double {
         val currentTargetCurrencyUnit: String = _uiState.value.targetCurrencyUnit
         return currencyUnitsAndRates[currentTargetCurrencyUnit] ?: 1.0
     }
 
+    /**
+     * Converts a value from source currency to target currency
+     * @param sourceCurrencyRate Source currency exchange rate
+     * @param targetCurrencyRate Target currency exchange rate
+     * @param sourceCurrencyValue Value to convert
+     * @return Formatted string of converted value
+     */
     private fun convertValue(
         sourceCurrencyRate: Double,
         targetCurrencyRate: Double,
@@ -343,6 +430,11 @@ class MainScreenViewModel(
         }
     }
 
+    /**
+     * Extension function to multiply a string n times
+     * @param n Number of times to multiply the string
+     * @return Resulting multiplied string
+     */
     private fun String.multiply(n: Int): String {
         val builder: StringBuilder = StringBuilder()
         for (i in 0 until n) {
@@ -351,6 +443,12 @@ class MainScreenViewModel(
         return builder.toString()
     }
 
+    /**
+     * Rounds a number to specified decimal places with proper formatting
+     * @param number Number to round
+     * @param decimalPlaces Number of decimal places to round to
+     * @return Formatted string representation of rounded number
+     */
     private fun roundNumber(number: Double, decimalPlaces: Int): String {
         val pattern = if (decimalPlaces == 0)
             "#,###"
@@ -405,6 +503,9 @@ class MainScreenViewModel(
     )
 
     companion object {
+        /**
+         * Factory for creating MainScreenViewModel instances with proper dependency injection
+         */
         val factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application: CurrencyConverterApplication =
@@ -415,6 +516,9 @@ class MainScreenViewModel(
             }
         }
 
+        /**
+         * Timeout duration for API requests in milliseconds
+         */
         const val TIMEOUT_REQUEST_DURATION = 10000L
     }
 }

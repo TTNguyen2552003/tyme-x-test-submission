@@ -18,23 +18,51 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * Data class representing the UI state for shared components across the application.
+ *
+ * @property isDarkTheme Boolean flag indicating whether dark theme is enabled
+ * @property tipsScreenShown Boolean flag indicating whether the tips screen should be displayed
+ */
 data class SharedUiState(
     val isDarkTheme: Boolean = false,
     val tipsScreenShown: Boolean = true
 )
 
+/**
+ * ViewModel responsible for managing shared UI state and user preferences across the application.
+ * This includes theme management and tips screen visibility preferences.
+ *
+ * @property userPreferenceRepository Repository handling user preference storage and retrieval
+ * @constructor Creates a SharedViewModel with the specified UserPreferenceRepository
+ */
 class SharedViewModel(
     private val userPreferenceRepository: UserPreferenceRepository
 ) : ViewModel() {
+
+    /**
+     * Backing property for UI state updates
+     */
     private val _uiState: MutableStateFlow<SharedUiState> =
         MutableStateFlow(value = SharedUiState())
+
+    /**
+     * Public immutable StateFlow exposing the current UI state
+     */
     val uiState: StateFlow<SharedUiState> = _uiState.asStateFlow()
 
+    /**
+     * Initializes the ViewModel by detecting tips screen visibility and theme preferences
+     */
     init {
         detectShowingTipsScreen()
         initTheme()
     }
 
+    /**
+     * Initializes the theme preference by reading from the UserPreferenceRepository
+     * and updating the UI state accordingly.
+     */
     private fun initTheme() {
         viewModelScope.launch {
             withContext(IO) {
@@ -45,6 +73,10 @@ class SharedViewModel(
         }
     }
 
+    /**
+     * Detects whether the tips screen should be shown based on user preferences
+     * and updates the UI state accordingly.
+     */
     private fun detectShowingTipsScreen() {
         viewModelScope.launch {
             withContext(IO) {
@@ -55,6 +87,10 @@ class SharedViewModel(
         }
     }
 
+    /**
+     * Lambda function to toggle the theme between light and dark mode.
+     * Updates both the UI state and persists the preference.
+     */
     val toggleTheme: () -> Unit = {
         viewModelScope.launch {
             withContext(IO) {
@@ -67,6 +103,10 @@ class SharedViewModel(
         }
     }
 
+    /**
+     * Lambda function to permanently hide the tips screen.
+     * Persists this preference to the UserPreferenceRepository.
+     */
     val hideTipsScreenPermanently: () -> Unit = {
         viewModelScope.launch {
             withContext(IO) {
@@ -75,7 +115,14 @@ class SharedViewModel(
         }
     }
 
+    /**
+     * Companion object containing factory methods for creating SharedViewModel instances.
+     */
     companion object {
+        /**
+         * Factory for creating SharedViewModel instances with proper dependency injection.
+         * Uses the application container to provide required dependencies.
+         */
         val factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application: CurrencyConverterApplication =
