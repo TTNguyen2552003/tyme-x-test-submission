@@ -26,6 +26,10 @@ A simple and efficient Currency Converter app built with Kotlin and Jetpack Comp
 ```
     git clone https://github.com/TTNguyen2552003/tyme-x-test-submission.git
 ```
+- Navigate to the project folder
+```
+    cd tyme-x-test-submission/challenge-1/CurrencyConverter
+```
 - Change the branch
 ```
     git checkout challenge-1
