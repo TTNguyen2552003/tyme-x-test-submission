@@ -1,10 +1,13 @@
 package app.kotlin.currencyconverter.ui.screens
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import app.kotlin.currencyconverter.ui.BreakPoints
 import app.kotlin.currencyconverter.ui.components.ButtonsContainer
 import app.kotlin.currencyconverter.ui.components.CurrencyType
 import app.kotlin.currencyconverter.ui.components.Display
@@ -27,12 +32,14 @@ import app.kotlin.currencyconverter.ui.components.buttons
 import app.kotlin.currencyconverter.ui.motion.standardAnimation
 import app.kotlin.currencyconverter.ui.styles.compactWidthSupportingText
 import app.kotlin.currencyconverter.ui.styles.gapPositive200
+import app.kotlin.currencyconverter.ui.styles.gapPositive400
 import app.kotlin.currencyconverter.ui.styles.gapPositive600
 import app.kotlin.currencyconverter.ui.styles.noScale
 import app.kotlin.currencyconverter.ui.styles.onSurfaceVariantDarkColor
 import app.kotlin.currencyconverter.ui.styles.onSurfaceVariantLightColor
 import app.kotlin.currencyconverter.ui.styles.surfaceDarkColor
 import app.kotlin.currencyconverter.ui.styles.surfaceLightColor
+
 
 @Composable
 fun ConvertScreen(
@@ -66,70 +73,219 @@ fun ConvertScreen(
         animationSpec = standardAnimation(),
         label = "color of supporting text"
     )
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .drawBehind { drawRect(color = backgroundColor) }
-            .statusBarsPadding()
-    ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(state = rememberScrollState())
-                .fillMaxWidth()
-                .weight(weight = 1f)
-                .padding(all = gapPositive600),
-            verticalArrangement = Arrangement.spacedBy(space = gapPositive200),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Box(
+
+    val screenWidth: Int = LocalConfiguration.current.screenWidthDp
+    val screenHeight: Int = LocalConfiguration.current.screenHeightDp
+
+    when {
+        screenWidth < BreakPoints.COMPACT_WIDTH_MAX -> {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(weight = 1f)
-                    .defaultMinSize(minHeight = 120.dp)
+                    .fillMaxSize()
+                    .drawBehind { drawRect(color = backgroundColor) }
+                    .statusBarsPadding()
             ) {
-                Display(
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(state = rememberScrollState())
+                        .fillMaxWidth()
+                        .weight(weight = 1f)
+                        .padding(all = gapPositive600),
+                    verticalArrangement = Arrangement.spacedBy(space = gapPositive200),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(weight = 1f)
+                            .defaultMinSize(minHeight = 120.dp)
+                    ) {
+                        Display(
+                            isDarkTheme = isDarkTheme,
+                            currencyType = CurrencyType.SOURCE,
+                            currencyUnits = currencyUnits,
+                            currentCurrencyUnit = sourceCurrencyUnit,
+                            currentCurrencyValue = sourceCurrencyValue,
+                            updateCurrencyUnit = updateSourceCurrencyUnit
+                        )
+                    }
+
+                    SwapButton(
+                        isDarkTheme = isDarkTheme,
+                        onPressed = swapCurrencyUnit
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(weight = 1f)
+                            .defaultMinSize(minHeight = 120.dp)
+                    ) {
+                        Display(
+                            isDarkTheme = isDarkTheme,
+                            currencyType = CurrencyType.TARGET,
+                            currencyUnits = currencyUnits,
+                            currentCurrencyUnit = targetCurrencyUnit,
+                            currentCurrencyValue = targetCurrencyValue,
+                            updateCurrencyUnit = updateTargetCurrencyUnit,
+                        )
+                    }
+
+                    Text(
+                        text = "The rates is provided by exchangeratesapi.io. Last update: $lastRatesUpdatingDate",
+                        style = compactWidthSupportingText.noScale(),
+                        color = supportingTextColor
+                    )
+                }
+
+                ButtonsContainer(
                     isDarkTheme = isDarkTheme,
-                    currencyType = CurrencyType.SOURCE,
-                    currencyUnits = currencyUnits,
-                    currentCurrencyUnit = sourceCurrencyUnit,
-                    currentCurrencyValue = sourceCurrencyValue,
-                    updateCurrencyUnit = updateSourceCurrencyUnit
+                    toggleTheme = toggleTheme,
+                    buttons = buttons,
+                    onPressedEvents = onPressedEvents
                 )
             }
-
-            SwapButton(
-                isDarkTheme = isDarkTheme,
-                onPressed = swapCurrencyUnit
-            )
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(weight = 1f)
-                    .defaultMinSize(minHeight = 120.dp)
-            ) {
-                Display(
-                    isDarkTheme = isDarkTheme,
-                    currencyType = CurrencyType.TARGET,
-                    currencyUnits = currencyUnits,
-                    currentCurrencyUnit = targetCurrencyUnit,
-                    currentCurrencyValue = targetCurrencyValue,
-                    updateCurrencyUnit = updateTargetCurrencyUnit,
-                )
-            }
-
-            Text(
-                text = "The rates is provided by exchangeratesapi.io. Last update: $lastRatesUpdatingDate",
-                style = compactWidthSupportingText.noScale(),
-                color = supportingTextColor
-            )
         }
 
-        ButtonsContainer(
-            isDarkTheme = isDarkTheme,
-            toggleTheme = toggleTheme,
-            buttons = buttons,
-            onPressedEvents = onPressedEvents
-        )
+        screenHeight < BreakPoints.COMPACT_HEIGHT_MAX -> {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawBehind { drawRect(color = backgroundColor) }
+                    .statusBarsPadding()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(weight = 1f)
+                        .padding(all = gapPositive400),
+                    verticalArrangement = Arrangement.spacedBy(space = gapPositive200),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(weight = 1f)
+                            .defaultMinSize(minHeight = 120.dp)
+                    ) {
+                        Display(
+                            isDarkTheme = isDarkTheme,
+                            currencyType = CurrencyType.SOURCE,
+                            currencyUnits = currencyUnits,
+                            currentCurrencyUnit = sourceCurrencyUnit,
+                            currentCurrencyValue = sourceCurrencyValue,
+                            updateCurrencyUnit = updateSourceCurrencyUnit
+                        )
+                    }
+
+                    SwapButton(
+                        isDarkTheme = isDarkTheme,
+                        onPressed = swapCurrencyUnit
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(weight = 1f)
+                    ) {
+                        Display(
+                            isDarkTheme = isDarkTheme,
+                            currencyType = CurrencyType.TARGET,
+                            currencyUnits = currencyUnits,
+                            currentCurrencyUnit = targetCurrencyUnit,
+                            currentCurrencyValue = targetCurrencyValue,
+                            updateCurrencyUnit = updateTargetCurrencyUnit,
+                        )
+                    }
+
+                    Text(
+                        text = "The rates is provided by exchangeratesapi.io. Last update: $lastRatesUpdatingDate",
+                        style = compactWidthSupportingText.noScale(),
+                        color = supportingTextColor
+                    )
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .weight(weight = 1f)
+                ) {
+                    ButtonsContainer(
+                        isDarkTheme = isDarkTheme,
+                        toggleTheme = toggleTheme,
+                        buttons = buttons,
+                        onPressedEvents = onPressedEvents
+                    )
+                }
+            }
+        }
+
+        else -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .drawBehind { drawRect(color = backgroundColor) }
+                    .statusBarsPadding()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(weight = 1f)
+                        .padding(all = gapPositive600),
+                    verticalArrangement = Arrangement.spacedBy(space = gapPositive200),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(weight = 1f)
+                            .defaultMinSize(minHeight = 120.dp)
+                    ) {
+                        Display(
+                            isDarkTheme = isDarkTheme,
+                            currencyType = CurrencyType.SOURCE,
+                            currencyUnits = currencyUnits,
+                            currentCurrencyUnit = sourceCurrencyUnit,
+                            currentCurrencyValue = sourceCurrencyValue,
+                            updateCurrencyUnit = updateSourceCurrencyUnit
+                        )
+                    }
+
+                    SwapButton(
+                        isDarkTheme = isDarkTheme,
+                        onPressed = swapCurrencyUnit
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(weight = 1f)
+                            .defaultMinSize(minHeight = 120.dp)
+                    ) {
+                        Display(
+                            isDarkTheme = isDarkTheme,
+                            currencyType = CurrencyType.TARGET,
+                            currencyUnits = currencyUnits,
+                            currentCurrencyUnit = targetCurrencyUnit,
+                            currentCurrencyValue = targetCurrencyValue,
+                            updateCurrencyUnit = updateTargetCurrencyUnit,
+                        )
+                    }
+
+                    Text(
+                        text = "The rates is provided by exchangeratesapi.io. Last update: $lastRatesUpdatingDate",
+                        style = compactWidthSupportingText.noScale(),
+                        color = supportingTextColor
+                    )
+                }
+
+                ButtonsContainer(
+                    isDarkTheme = isDarkTheme,
+                    toggleTheme = toggleTheme,
+                    buttons = buttons,
+                    onPressedEvents = onPressedEvents
+                )
+            }
+        }
     }
 }
