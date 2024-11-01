@@ -34,10 +34,6 @@ A simple and efficient Currency Converter app built with Kotlin and Jetpack Comp
 ```
     git checkout challenge-1
 ```
-- Navigate to the project folder
-```
-    cd tyme-x-test-submission/challenge-1/CurrencyConverter
-```
 - Open the current folder with Android Studio, then build and run the project
 
 ## View the video demo
