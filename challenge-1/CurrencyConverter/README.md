@@ -1,5 +1,5 @@
 # Currency Converter App
-A simple and efficient Currency Converter app built with Kotlin and Jetpack Compose for Android. This app allows users to convert between various currencies in real-time using a modern and intuitive user interface.
+A simple and efficient Currency Converter app built with Kotlin and Jetpack Compose for Android. This app allows users to convert between various currencies in real time using a modern and intuitive user interface.
 
 ### Features
 - 💱 Real-time currency conversion
@@ -11,7 +11,9 @@ A simple and efficient Currency Converter app built with Kotlin and Jetpack Comp
 - ⚡️ Fast and lightweight
 
 ## Project Structure
-
+<p align="center">
+    <img src="https://github.com/TTNguyen2552003/tyme-x-test-submission/blob/challenge-1/challenge-1/CurrencyConverter/app_architecture.svg" alt="Unscramble screen app" width="50%" height="50%">
+</p>
 ## Setup
 
 ### Prerequisites
@@ -28,11 +30,11 @@ A simple and efficient Currency Converter app built with Kotlin and Jetpack Comp
 ```
     git checkout challenge-1
 ```
-- Navigate to project folder
+- Navigate to the project folder
 ```
     cd tyme-x-test-submission/challenge-1/CurrencyConverter
 ```
-- Open the current folder with Android Studio, then build and run project
+- Open the current folder with Android Studio, then build and run the project
 
 ## Author
 - [@TTNguyen2552003](https://www.github.com/TTNguyen2552003)
