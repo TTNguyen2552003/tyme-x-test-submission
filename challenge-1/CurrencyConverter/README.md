@@ -36,5 +36,8 @@ A simple and efficient Currency Converter app built with Kotlin and Jetpack Comp
 ```
 - Open the current folder with Android Studio, then build and run the project
 
+## View the video demo
+- [Youtube](https://www.youtube.com/watch?v=sChcae3BKwM)
+
 ## Author
 - [@TTNguyen2552003](https://www.github.com/TTNguyen2552003)
